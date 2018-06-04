@@ -1,4 +1,4 @@
-package com.kolade.offers
+package com.kolade.offers.marshallers
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import com.kolade.offers.model._
