@@ -24,15 +24,15 @@ class Routes(offerService: OfferService) extends CustomJsonSupport with Logging 
     ExceptionHandler {
       case NonFatal(ex) =>
         extractUri { uri =>
-          logger.info(s"Request to $uri could not be handled normally")
+          logger.info(s"Request to $uri could not be handled normally: ${ex.getMessage}")
           complete(HttpResponse(InternalServerError, entity = ex.getMessage))
         }
     }
 
   implicit def rejectionHandler: RejectionHandler = {
     RejectionHandler.newBuilder()
-      .handle { case e: ValidationRejection =>
-        val validationErrors = HttpEntity(ContentTypes.`application/json`, validationErrorsFormat.write(e).toString)
+      .handle { case ex: ValidationRejection =>
+        val validationErrors = HttpEntity(ContentTypes.`application/json`, validationErrorsFormat.write(ex).toString)
         complete(HttpResponse(StatusCodes.BadRequest, entity = validationErrors))
       }.result().withFallback(RejectionHandler.default)
   }
