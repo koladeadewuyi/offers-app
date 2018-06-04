@@ -8,7 +8,8 @@ The service allows a merchant to explicitly cancel an offer even before its expi
 ## Assumptions made
 - Offer description would be in String/Text format for simplicity reasons instead of nested form fields
 - Cancelled offers are deleted
-- Expired offers can still be viewed but have the expired field set to Yes,   
+- Expired offers can still be viewed but have the expired field set to Yes.
+- For simplicity offers are stored in an in-memory cache but can be swapped with another backend which implements the OfferRepository interface    
 
 ## Getting Started
 
@@ -36,7 +37,7 @@ curl -v -X POST \
 }'
 ```
 
-To retrieve created offer:
+To retrieve an offer:
 ```bash
 curl -v -X GET \
   http://127.0.0.1:8080/offers/e069427a-4a0d-40cf-8018-534a1d9705c5 \
