@@ -40,24 +40,24 @@ class DefaultOfferServiceSpec extends TestFixture {
       it("should return a future of the offer when given an offerId that exists") {
         val offerRepositoryMock = mock[OfferRepository]
         val offerService = new DefaultOfferService(offerRepositoryMock)
-        val offer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Some(Expired.No))
-        (offerRepositoryMock.get _).expects(offer.offerId).returns(Future.successful(Some(offer))).once()
+        val offer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
+        (offerRepositoryMock.get _).expects(offer.offerId).returns(Future.successful(Option(offer))).once()
 
         val result = offerService.getOffer(offer.offerId)
 
-        result.futureValue shouldBe Some(offer)
+        result.futureValue shouldBe Option(offer)
       }
 
       it("should auto-expire an offer with an endDate before the current dateTime") {
         val offerRepositoryMock = mock[OfferRepository]
         val offerService = new DefaultOfferService(offerRepositoryMock)
-        val offer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Some(Expired.No))
-        (offerRepositoryMock.get _).expects(offer.offerId).returns(Future.successful(Some(offer))).once()
+        val offer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
+        (offerRepositoryMock.get _).expects(offer.offerId).returns(Future.successful(Option(offer))).once()
 
         withSystemTimeSetTo(nextDay.plusMillis(1)) {
           val result = offerService.getOffer(offer.offerId)
 
-          result.futureValue shouldBe Some(offer.copy(expired = Some(Expired.Yes)))
+          result.futureValue shouldBe Option(offer.copy(expired = Option(Expired.Yes)))
         }
       }
 
@@ -86,15 +86,15 @@ class DefaultOfferServiceSpec extends TestFixture {
     }
 
     describe("cancelOffer") {
-      it("should return a future of some Done when given an offerId that exists") {
+      it("should return a future of Option Done when given an offerId that exists") {
         val offerId = randomUUID
         val offerRepositoryMock = mock[OfferRepository]
         val offerService = new DefaultOfferService(offerRepositoryMock)
-        (offerRepositoryMock.delete _).expects(offerId).returns(Future.successful(Some(Done))).once
+        (offerRepositoryMock.delete _).expects(offerId).returns(Future.successful(Option(Done))).once
 
         val createdOfferFuture = offerService.cancelOffer(offerId)
 
-        createdOfferFuture.futureValue shouldBe Some(Done)
+        createdOfferFuture.futureValue shouldBe Option(Done)
       }
 
       it("should return a future of None when given an offerId that does not exists") {
@@ -124,8 +124,8 @@ class DefaultOfferServiceSpec extends TestFixture {
     describe("retrieveAllOffers") {
       it("should return a future of all offers") {
         val offerRepositoryMock = mock[OfferRepository]
-        val firstOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Some(Expired.No))
-        val secondOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Some(Expired.No))
+        val firstOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
+        val secondOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
         val expectedOffers = Seq(firstOffer, secondOffer)
         val offerService = new DefaultOfferService(offerRepositoryMock)
         (() => offerRepositoryMock.retrieveAll()).expects().returns(Future.successful(expectedOffers)).once
@@ -137,8 +137,8 @@ class DefaultOfferServiceSpec extends TestFixture {
 
       it("should auto-expire offers having their endDate before the current dateTime") {
         val offerRepositoryMock = mock[OfferRepository]
-        val firstOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Some(Expired.No))
-        val secondOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextThreeHours), Some(Expired.No))
+        val firstOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
+        val secondOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextThreeHours), Option(Expired.No))
         val offerService = new DefaultOfferService(offerRepositoryMock)
         val expectedOffers = Seq(firstOffer, secondOffer)
         (() => offerRepositoryMock.retrieveAll()).expects().returns(Future.successful(expectedOffers)).once
@@ -146,7 +146,7 @@ class DefaultOfferServiceSpec extends TestFixture {
         withSystemTimeSetTo(nextThreeHours.plusMillis(1)) {
           val result = offerService.retrieveAllOffers()
 
-          result.futureValue shouldBe Seq(firstOffer, secondOffer.copy(expired = Some(Expired.Yes)))
+          result.futureValue shouldBe Seq(firstOffer, secondOffer.copy(expired = Option(Expired.Yes)))
         }
       }
 

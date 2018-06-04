@@ -22,7 +22,7 @@ class RoutesSpec extends TestFixture with ScalatestRouteTest {
       it("should return an offer when a request is made to path /offers/<offerId>") {
         val offerId = randomUUID
         val expectedOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(now, nextDay))
-        (offerServiceMock.getOffer(_: String)(_: ExecutionContext)).expects(offerId, global).returns(Future(Some(expectedOffer))).once
+        (offerServiceMock.getOffer(_: String)(_: ExecutionContext)).expects(offerId, global).returns(Future(Option(expectedOffer))).once
 
         Get(s"/offers/$offerId") ~> route ~> check {
           status shouldBe OK
@@ -121,7 +121,7 @@ class RoutesSpec extends TestFixture with ScalatestRouteTest {
 
       it("should complete successfully when a request to delete an offer is made to path /offers/<offerId>") {
         val offerId = randomUUID
-        (offerServiceMock.cancelOffer _).expects(offerId).returns(Future(Some(Done))).once
+        (offerServiceMock.cancelOffer _).expects(offerId).returns(Future(Option(Done))).once
 
         Delete(s"/offers/$offerId") ~> route ~> check {
           status shouldBe OK

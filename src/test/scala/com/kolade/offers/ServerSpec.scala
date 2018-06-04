@@ -42,7 +42,7 @@ class ServerSpec extends TestFixture with MarshallingTestUtils with TryValues wi
           Then("the offer should be retrievable using its offerId")
           whenReady(makeRequest(s"/offers/$offerId")) { response =>
             response.status shouldBe OK
-            val expectedOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(now, nextDay), Some(Expired.No))
+            val expectedOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
             unmarshal[Offer](response.entity).success.value shouldBe expectedOffer
           }
         }
@@ -85,7 +85,7 @@ class ServerSpec extends TestFixture with MarshallingTestUtils with TryValues wi
 
           And("the offer was indeed created")
           whenReady(makeRequest(s"/offers/$offerId")) { response =>
-            val expectedOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(now, nextDay), Some(Expired.No))
+            val expectedOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
             response.status shouldBe OK
             unmarshal[Offer](response.entity).success.value shouldBe expectedOffer
 
@@ -119,7 +119,7 @@ class ServerSpec extends TestFixture with MarshallingTestUtils with TryValues wi
 
           And("the offer was indeed created")
           whenReady(makeRequest(s"/offers/$offerId")) { response =>
-            val originalOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(now, nextDay), Some(Expired.No))
+            val originalOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
             response.status shouldBe OK
             unmarshal[Offer](response.entity).success.value shouldBe originalOffer
 
@@ -130,7 +130,7 @@ class ServerSpec extends TestFixture with MarshallingTestUtils with TryValues wi
               Then("the retrieved offer should reflect the updates")
               whenReady(makeRequest(s"/offers/$offerId")) { response =>
                 response.status shouldBe OK
-                val updatedOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(nextThreeHours, nextDay), Some(Expired.No))
+                val updatedOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(nextThreeHours, nextDay), Option(Expired.No))
                 unmarshal[Offer](response.entity).success.value shouldBe updatedOffer
               }
             }
@@ -153,13 +153,13 @@ class ServerSpec extends TestFixture with MarshallingTestUtils with TryValues wi
           whenReady(makeRequest("/offers", POST, firstEntity)) { response =>
             response.status shouldBe Created
             val offerId = unmarshal[Offer](response.entity).success.value.offerId
-            val firstOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(now, nextDay), Some(Expired.No))
+            val firstOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
 
             And("a successful request to create a second offer is made")
             whenReady(makeRequest("/offers", POST, secondEntity)) { response =>
               response.status shouldBe Created
               val offerId = unmarshal[Offer](response.entity).success.value.offerId
-              val secondOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(nextThreeHours, nextDay), Some(Expired.No))
+              val secondOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(nextThreeHours, nextDay), Option(Expired.No))
 
               When("a successful request to retrieve all offers is made")
               whenReady(makeRequest("/offers")) { response =>
@@ -185,13 +185,13 @@ class ServerSpec extends TestFixture with MarshallingTestUtils with TryValues wi
         whenReady(makeRequest("/offers", POST, firstEntity)) { response =>
           response.status shouldBe Created
           val offerId = unmarshal[Offer](response.entity).success.value.offerId
-          val firstOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(now, nextDay), Some(Expired.No))
+          val firstOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
 
           And("a successful request to create a second offer is made")
           whenReady(makeRequest("/offers", POST, secondEntity)) { response =>
             response.status shouldBe Created
             val offerId = unmarshal[Offer](response.entity).success.value.offerId
-            val secondOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(nextThreeHours, nextDay), Some(Expired.No))
+            val secondOffer = Offer(offerId, ValidDescription, Price(ValidCost), Validity(nextThreeHours, nextDay), Option(Expired.No))
 
             And("both offers were indeed created")
             whenReady(makeRequest("/offers")) { response =>

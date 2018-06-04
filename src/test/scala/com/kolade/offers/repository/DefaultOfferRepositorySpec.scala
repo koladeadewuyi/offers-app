@@ -19,7 +19,7 @@ class DefaultOfferRepositorySpec extends TestFixture {
         val result = new DefaultOfferRepository(dataStoreMock).create(offer)
 
         result.futureValue shouldBe offer
-        dataStoreMock.getIfPresent(offer.offerId) shouldBe Some(offer)
+        dataStoreMock.getIfPresent(offer.offerId) shouldBe Option(offer)
       }
 
       it("should return a failed future with appropriate message when the dataStore throws an exception") {
@@ -36,13 +36,13 @@ class DefaultOfferRepositorySpec extends TestFixture {
 
     describe("get") {
       it("should retrieve an existing offer when given the offerId") {
-        val offer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Some(Expired.No))
+        val offer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
         val dataStoreMock = createDataStore()
         dataStoreMock.put(offer.offerId, offer)
 
         val result = new DefaultOfferRepository(dataStoreMock).get(offer.offerId)
 
-        result.futureValue shouldBe Some(offer)
+        result.futureValue shouldBe Option(offer)
       }
 
       it("should return a future of None when offerId does not exist") {
@@ -73,7 +73,7 @@ class DefaultOfferRepositorySpec extends TestFixture {
 
         val result = new DefaultOfferRepository(dataStoreMock).delete(offer.offerId)
 
-        result.futureValue shouldBe Some(Done)
+        result.futureValue shouldBe Option(Done)
         dataStoreMock.getIfPresent(offer.offerId) shouldBe None
       }
 
@@ -98,7 +98,7 @@ class DefaultOfferRepositorySpec extends TestFixture {
         val result = new DefaultOfferRepository(dataStoreMock).update(updatedOffer)
 
         result.futureValue shouldBe updatedOffer
-        dataStoreMock.getIfPresent(originalOffer.offerId) shouldBe Some(updatedOffer)
+        dataStoreMock.getIfPresent(originalOffer.offerId) shouldBe Option(updatedOffer)
       }
 
       it("should return a failed future with appropriate message when the dataStore throws an exception") {
@@ -129,8 +129,8 @@ class DefaultOfferRepositorySpec extends TestFixture {
 
     describe("retrieveAll") {
       it("should retrieve all offers") {
-        val firstOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Some(Expired.No))
-        val secondOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Some(Expired.No))
+        val firstOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
+        val secondOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
         val dataStoreMock = createDataStore()
         dataStoreMock.put(firstOffer.offerId, firstOffer)
         dataStoreMock.put(secondOffer.offerId, secondOffer)
