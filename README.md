@@ -1,15 +1,15 @@
 # Merchant Offers Service
 
 A simple RESTful software service that allows a merchant to create a new simple offer. Offers, once created, may be
-queried. Offers expire after the period of time defined on the offer. Expired offers when queried have the 'expire' field set to 'Yes'.
+queried. Offers expire after the period of time defined on the offer. Expired offers when queried have their 'expire' fields set to 'Yes'.
 
 The service allows a merchant to explicitly cancel an offer even before its expiry.
 
 ## Assumptions made
 - Offer description would be in String/Text format for simplicity reasons instead of nested form fields
 - Cancelled offers are deleted
-- Expired offers can still be viewed but have the expired field set to Yes.
-- For simplicity offers are stored in an in-memory cache but can be swapped with another backend which implements the OfferRepository interface    
+- Expired offers can still be viewed but have their expired fields set to Yes.
+- For simplicity, offers are stored in an in-memory cache but can be swapped with another backend which implements the OfferRepository interface    
 
 ## Getting Started
 
@@ -109,11 +109,12 @@ sbt clean test
 
 ### Break down of tests
 
-Explain what these tests test and why
+* ServerSpec - tests the behaviours a merchant expects from the service (including unhappy scenarios) using Given-When-Then style 
+* DefaultServiceSpec - tests the offer service with the offer repository mocked
+* DefaultOfferRepositorySpec - tests the offer repository with a backend serving as a test double
+* OfferValidationSpec - tests the validation of offers
+* RoutesSpec - tests the routes, entity validation, and exceptionHandlers while the offer service mocked
 
-```
-Give an example
-```
 
 ### Coding style
 
