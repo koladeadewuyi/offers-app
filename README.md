@@ -9,7 +9,8 @@ The service allows a merchant to explicitly cancel an offer even before its expi
 - Offer description would be in String/Text format for simplicity reasons instead of nested form fields
 - Cancelled offers are deleted
 - Expired offers can still be viewed but have their expired fields set to Yes.
-- For simplicity, offers are stored in an in-memory cache but can be swapped with another backend which implements the OfferRepository interface    
+- For simplicity, offers are stored in an in-memory cache but can be swapped with another backend which implements the OfferRepository interface
+- Authentication and authorization concerns are ignored for simplicity    
 
 ## Getting Started
 
