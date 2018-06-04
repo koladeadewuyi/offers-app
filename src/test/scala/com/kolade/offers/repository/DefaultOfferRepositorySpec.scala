@@ -13,7 +13,7 @@ class DefaultOfferRepositorySpec extends TestFixture {
   describe("DefaultOfferRepository") {
     describe("create") {
       it("should persist a given offer") {
-        val offer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay))
+        val offer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay))
         val dataStoreMock = createDataStore()
 
         val result = new DefaultOfferRepository(dataStoreMock).create(offer)
@@ -23,7 +23,7 @@ class DefaultOfferRepositorySpec extends TestFixture {
       }
 
       it("should return a failed future with appropriate message when the dataStore throws an exception") {
-        val offer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay))
+        val offer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay))
         val dataStoreMock = failingDataStore
 
         val result = new DefaultOfferRepository(dataStoreMock).create(offer)
@@ -36,7 +36,7 @@ class DefaultOfferRepositorySpec extends TestFixture {
 
     describe("get") {
       it("should retrieve an existing offer when given the offerId") {
-        val offer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
+        val offer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay), Option(Expired.No))
         val dataStoreMock = createDataStore()
         dataStoreMock.put(offer.offerId, offer)
 
@@ -46,7 +46,7 @@ class DefaultOfferRepositorySpec extends TestFixture {
       }
 
       it("should return a future of None when offerId does not exist") {
-        val offer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay))
+        val offer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay))
         val dataStoreMock = createDataStore()
 
         val result = new DefaultOfferRepository(dataStoreMock).get(offer.offerId)
@@ -67,7 +67,7 @@ class DefaultOfferRepositorySpec extends TestFixture {
 
     describe("delete") {
       it("should delete an existing offer when given the offerId") {
-        val offer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay))
+        val offer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay))
         val dataStoreMock = createDataStore()
         dataStoreMock.put(offer.offerId, offer)
 
@@ -90,8 +90,8 @@ class DefaultOfferRepositorySpec extends TestFixture {
 
     describe("update") {
       it("should update an existing offer when given an update") {
-        val originalOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay))
-        val updatedOffer = Offer(originalOffer.offerId, ValidDescription, Price(ValidCost), Validity(now, nextDay))
+        val originalOffer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay))
+        val updatedOffer = Offer(originalOffer.offerId, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay))
         val dataStoreMock = createDataStore()
         dataStoreMock.put(originalOffer.offerId, originalOffer)
 
@@ -102,7 +102,7 @@ class DefaultOfferRepositorySpec extends TestFixture {
       }
 
       it("should return a failed future with appropriate message when the dataStore throws an exception") {
-        val updatedOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay))
+        val updatedOffer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay))
 
         val result = new DefaultOfferRepository(failingDataStore).update(updatedOffer)
 
@@ -114,8 +114,8 @@ class DefaultOfferRepositorySpec extends TestFixture {
 
     describe("deleteAll") {
       it("should delete all offers") {
-        val firstOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay))
-        val secondOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay))
+        val firstOffer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay))
+        val secondOffer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay))
         val dataStoreMock = createDataStore()
         dataStoreMock.put(firstOffer.offerId, firstOffer)
         dataStoreMock.put(secondOffer.offerId, secondOffer)
@@ -129,8 +129,8 @@ class DefaultOfferRepositorySpec extends TestFixture {
 
     describe("retrieveAll") {
       it("should retrieve all offers") {
-        val firstOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
-        val secondOffer = Offer(randomUUID, ValidDescription, Price(ValidCost), Validity(now, nextDay), Option(Expired.No))
+        val firstOffer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay), Option(Expired.No))
+        val secondOffer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay), Option(Expired.No))
         val dataStoreMock = createDataStore()
         dataStoreMock.put(firstOffer.offerId, firstOffer)
         dataStoreMock.put(secondOffer.offerId, secondOffer)

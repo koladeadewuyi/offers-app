@@ -1,6 +1,7 @@
 package com.kolade.offers
 
 import akka.http.scaladsl.server.Rejection
+import org.joda.money.Money
 import org.joda.time.DateTime
 
 package object model {
@@ -10,7 +11,7 @@ package object model {
     val Yes, No = Value
   }
 
-  final case class Price(cost: Int, currency: Char = '£')
+  final case class Price(cost: Money)
 
   final case class Validity(startDate: DateTime, endDate: DateTime)
 

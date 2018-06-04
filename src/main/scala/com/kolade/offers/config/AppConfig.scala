@@ -11,7 +11,11 @@ trait AppConfig {
   val OfferCacheCapacity: Long = config.getLong("cache.capacity")
 
   private val validationConfig = config.getConfig("offer.validation")
-  val MinAllowedCost: Int = validationConfig.getInt("minAllowedCost")
+
+  private val TwoDecimalDigits = 2
+  private val minAllowedCostAsDouble: Double = validationConfig.getDouble("minAllowedCost")
+  val MinAllowedCost: BigDecimal = BigDecimal(minAllowedCostAsDouble).setScale(TwoDecimalDigits, BigDecimal.RoundingMode.HALF_UP)
+
   val MinAllowedDescriptionLength: Int = validationConfig.getInt("minAllowedDescriptionLength")
   val MinAllowedOfferIdLength: Int = validationConfig.getInt("minAllowedOfferIdLength")
   val MaxDaysAgoAllowedForOfferStartDate: Int = validationConfig.getInt("maxDaysAgoAllowedForOfferStartDate")

@@ -15,6 +15,7 @@ val ScaffeineVersion = "2.3.0"
 val Log4jScalaApiVersion = "11.0"
 val Log4jVersion = "2.9.1"
 val TypeSafeConfigVersion = "1.3.3"
+val JodaMoneVersion = "0.12"
 
 libraryDependencies ++= Seq(
   "com.typesafe" % "config" % TypeSafeConfigVersion,
@@ -23,6 +24,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % AkkaVersion,
   "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
   "joda-time" % "joda-time" % JodaTimeVersion,
+  "org.joda" % "joda-money" % JodaMoneVersion,
   "com.github.blemale" %% "scaffeine" % ScaffeineVersion,
   "org.apache.logging.log4j" %% "log4j-api-scala" % Log4jScalaApiVersion,
   "org.apache.logging.log4j" % "log4j-api" % Log4jVersion,

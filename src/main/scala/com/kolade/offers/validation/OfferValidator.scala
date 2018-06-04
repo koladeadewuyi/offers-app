@@ -6,6 +6,8 @@ import org.joda.time.DateTime
 
 object OfferValidator extends Validator[Offer] with AppConfig {
 
+  private val Zero = 0
+
   override def apply(offer: Offer): Seq[FieldErrorInfo] = {
 
     val offerIdErrorOpt = validation(
@@ -19,7 +21,7 @@ object OfferValidator extends Validator[Offer] with AppConfig {
       s"offer description must exceed $MinAllowedDescriptionLength characters")
 
     val costErrorOpt = validation(
-      costRule(offer.price.cost),
+      costRule(offer.price.cost.getAmount),
       "cost",
       s"offer cost must be greater than $MinAllowedCost")
 
@@ -40,7 +42,7 @@ object OfferValidator extends Validator[Offer] with AppConfig {
 
   private def descriptionRule(description: String) = description.length > MinAllowedDescriptionLength
 
-  private def costRule(cost: Int) = cost > MinAllowedCost
+  private def costRule(cost: BigDecimal) = cost.compareTo(MinAllowedCost) > Zero
 
   private def startDateRule(startDate: DateTime) = startDate.isAfter(new DateTime().minusDays(MaxDaysAgoAllowedForOfferStartDate))
 

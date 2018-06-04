@@ -2,15 +2,21 @@ package com.kolade.offers
 
 import java.util.UUID
 
+import akka.http.scaladsl.model.HttpEntity
+import akka.http.scaladsl.testkit.MarshallingTestUtils
+import akka.stream.ActorMaterializer
+import com.kolade.offers.model.{Offer, Price, Validity}
+import org.joda.money.{CurrencyUnit, Money}
 import org.joda.time.{DateTime, DateTimeUtils}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.{Assertion, FunSpec, Matchers}
-import spray.json.JsString
+
+import scala.concurrent.ExecutionContext
 
 trait TestFixture extends FunSpec with Matchers with MockFactory with ScalaFutures with TableDrivenPropertyChecks
-  with CustomJsonSupport {
+  with CustomJsonSupport with MarshallingTestUtils {
 
   val ValidCost = 10
   val CostZeroOrLess = 0
@@ -23,6 +29,8 @@ trait TestFixture extends FunSpec with Matchers with MockFactory with ScalaFutur
 
   def randomUUID: String = UUID.randomUUID.toString
 
+  def money(amount: Int): Money = Money.of(CurrencyUnit.GBP, amount)
+
   def withSystemTimeSetTo(frozenTime: DateTime)(func: => Assertion): Unit = {
     try {
       DateTimeUtils.setCurrentMillisFixed(frozenTime.getMillis)
@@ -32,23 +40,10 @@ trait TestFixture extends FunSpec with Matchers with MockFactory with ScalaFutur
     }
   }
 
-  def createOfferBody(description: String, cost: Int, startDate: DateTime, endDate: DateTime): String = {
-    s"""
-       |{
-       |  "offerId": "",
-       |  "description": "$description",
-       |  "price": {
-       |      "cost": $cost,
-       |      "currency": "£"
-       |  },
-       |  "validity": {
-       |      "startDate": ${toJsString(startDate)},
-       |      "endDate": ${toJsString(endDate)}
-       |  }
-       |}
-       |""".stripMargin
-  }
+  def createOfferEntity(description: String, cost: Int, startDate: DateTime, endDate: DateTime)
+                       (implicit ec: ExecutionContext, materializer: ActorMaterializer): HttpEntity.Strict = {
 
-  private def toJsString(dateTime: DateTime): JsString = DateJsonFormat.write(dateTime)
+    marshal[Offer](Offer("N/A", description, Price(money(cost)), Validity(startDate, endDate)))
+  }
 
 }
