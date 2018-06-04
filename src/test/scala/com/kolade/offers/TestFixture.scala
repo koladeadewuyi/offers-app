@@ -5,6 +5,7 @@ import java.util.UUID
 import akka.http.scaladsl.model.HttpEntity
 import akka.http.scaladsl.testkit.MarshallingTestUtils
 import akka.stream.ActorMaterializer
+import com.kolade.offers.marshallers.CustomJsonSupport
 import com.kolade.offers.model.{Offer, Price, Validity}
 import org.joda.money.{CurrencyUnit, Money}
 import org.joda.time.{DateTime, DateTimeUtils}

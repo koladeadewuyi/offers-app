@@ -3,7 +3,7 @@ package com.kolade.offers.validation
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.Directive1
 import akka.http.scaladsl.server.Directives._
-import com.kolade.offers.CustomJsonSupport
+import com.kolade.offers.marshallers.CustomJsonSupport
 import com.kolade.offers.model.{FieldErrorInfo, ValidationRejection}
 import spray.json.DefaultJsonProtocol
 

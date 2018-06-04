@@ -7,7 +7,7 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, RejectionHandler, Route}
-import com.kolade.offers.CustomJsonSupport
+import com.kolade.offers.marshallers.CustomJsonSupport
 import com.kolade.offers.model.{Offer, ValidationRejection}
 import com.kolade.offers.service.OfferService
 import com.kolade.offers.validation.OfferValidator
