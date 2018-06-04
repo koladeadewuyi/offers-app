@@ -1,13 +1,14 @@
 package com.kolade.offers.service
 
 import akka.Done
+import com.kolade.offers.config.AppConfig
 import com.kolade.offers.model.Expired._
 import com.kolade.offers.model.Offer
 import com.kolade.offers.repository.OfferRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DefaultOfferService(offerRepository: OfferRepository) extends OfferService {
+class DefaultOfferService(offerRepository: OfferRepository) extends OfferService with AppConfig {
 
   def createOffer(validatedOffer: Offer): Future[Offer] = {
     offerRepository.create(validatedOffer)
@@ -15,7 +16,7 @@ class DefaultOfferService(offerRepository: OfferRepository) extends OfferService
 
   def getOffer(offerId: String)(implicit ec: ExecutionContext): Future[Option[Offer]] = {
     offerRepository.get(offerId).map {
-      offerOpt => offerOpt.map(autoExpire)
+      offerOpt => offerOpt.map(postProcess)
     }
   }
 
@@ -29,7 +30,7 @@ class DefaultOfferService(offerRepository: OfferRepository) extends OfferService
 
   def retrieveAllOffers()(implicit ec: ExecutionContext): Future[Seq[Offer]] = {
     offerRepository.retrieveAll().map {
-      offers => offers.map(autoExpire)
+      offers => offers.map(postProcess)
     }
   }
 
@@ -37,9 +38,10 @@ class DefaultOfferService(offerRepository: OfferRepository) extends OfferService
     offerRepository.deleteAll()
   }
 
-  private def autoExpire(offer: Offer): Offer = {
+  private def postProcess(offer: Offer): Offer = {
+    val link = s"$OfferLinkPrefix/${offer.offerId}"
     val isExpired = if (offer.validity.endDate.isAfterNow) No else Yes
-    offer.copy(expired = Option(isExpired))
+    offer.copy(expired = Option(isExpired), link = Option(link))
   }
 
 }

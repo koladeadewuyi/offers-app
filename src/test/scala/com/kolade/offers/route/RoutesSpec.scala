@@ -20,7 +20,7 @@ class RoutesSpec extends TestFixture with ScalatestRouteTest {
     describe("GET") {
       it("should return an offer when a request is made to path /offers/<offerId>") {
         val offerId = randomUUID
-        val expectedOffer = Offer(offerId, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay))
+        val expectedOffer = Offer(offerId, ValidDescription, price(ValidAmount), Validity(now, nextDay))
         (offerServiceMock.getOffer(_: String)(_: ExecutionContext)).expects(offerId, global).returns(Future(Option(expectedOffer))).once
 
         Get(s"/offers/$offerId") ~> route ~> check {
@@ -30,8 +30,8 @@ class RoutesSpec extends TestFixture with ScalatestRouteTest {
       }
 
       it("should return all offers when a request is made to path /offers") {
-        val firstOffer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay))
-        val secondOffer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay))
+        val firstOffer = Offer(randomUUID, ValidDescription, price(ValidAmount), Validity(now, nextDay))
+        val secondOffer = Offer(randomUUID, ValidDescription, price(ValidAmount), Validity(now, nextDay))
         val expectedOffers = Seq(firstOffer, secondOffer)
         (offerServiceMock.retrieveAllOffers()(_: ExecutionContext)).expects(global).returns(Future(expectedOffers)).once
 
@@ -65,9 +65,9 @@ class RoutesSpec extends TestFixture with ScalatestRouteTest {
 
     describe("POST") {
       it("should return the created offer when a request is made to path /offers") {
-        val offer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay))
+        val offer = Offer(randomUUID, ValidDescription, price(ValidAmount), Validity(now, nextDay))
         (offerServiceMock.createOffer _).expects(*).returns(Future(offer)).once
-        val validOfferEntity = createOfferEntity(ValidDescription, ValidCost, now, nextDay)
+        val validOfferEntity = createOfferEntity(ValidDescription, ValidAmount, now, nextDay)
 
         Post("/offers", validOfferEntity) ~> route ~> check {
           status shouldBe Created
@@ -76,20 +76,20 @@ class RoutesSpec extends TestFixture with ScalatestRouteTest {
       }
 
       it("should return validation errors info when a request is made to path /offers with invalid fields") {
-        val inValidOfferEntity = createOfferEntity(ValidDescription, CostZeroOrLess, now, nextDay)
+        val inValidOfferEntity = createOfferEntity(ValidDescription, AmountZeroOrLess, now, nextDay)
 
         Post("/offers", inValidOfferEntity) ~> route ~> check {
           status shouldBe BadRequest
-          responseAs[ValidationRejection] shouldBe ValidationRejection(Seq(FieldErrorInfo("cost", "offer cost must be greater than 0.00")))
+          responseAs[ValidationRejection] shouldBe ValidationRejection(Seq(FieldErrorInfo("price", "offer price must be greater than 0.00")))
         }
       }
     }
 
     describe("PUT") {
       it("should return the updated offer when a request is made to path /offers/<offerId>") {
-        val offer = Offer(randomUUID, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay))
+        val offer = Offer(randomUUID, ValidDescription, price(ValidAmount), Validity(now, nextDay))
         (offerServiceMock.updateOffer _).expects(*).returns(Future(offer)).once
-        val validOfferEntiry = createOfferEntity(ValidDescription, ValidCost, now, nextDay)
+        val validOfferEntiry = createOfferEntity(ValidDescription, ValidAmount, now, nextDay)
 
         Put(s"/offers/${offer.offerId}", validOfferEntiry) ~> route ~> check {
           status shouldBe Created
@@ -99,11 +99,11 @@ class RoutesSpec extends TestFixture with ScalatestRouteTest {
 
       it("should return validation errors info when a request is made to path /offers/<offerId> with invalid fields") {
         val offerId = randomUUID
-        val inValidOfferEntity = createOfferEntity(ValidDescription, CostZeroOrLess, now, nextDay)
+        val inValidOfferEntity = createOfferEntity(ValidDescription, AmountZeroOrLess, now, nextDay)
 
         Put(s"/offers/$offerId", inValidOfferEntity) ~> route ~> check {
           status shouldBe BadRequest
-          responseAs[ValidationRejection] shouldBe ValidationRejection(Seq(FieldErrorInfo("cost", "offer cost must be greater than 0.00")))
+          responseAs[ValidationRejection] shouldBe ValidationRejection(Seq(FieldErrorInfo("price", "offer price must be greater than 0.00")))
         }
       }
     }

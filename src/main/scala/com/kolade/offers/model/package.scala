@@ -11,11 +11,14 @@ package object model {
     val Yes, No = Value
   }
 
-  final case class Price(cost: Money)
-
   final case class Validity(startDate: DateTime, endDate: DateTime)
 
-  final case class Offer(offerId: String, description: String, price: Price, validity: Validity, expired: Option[Expired.Value] = None)
+  final case class Offer(offerId: String,
+                         description: String,
+                         price: Money,
+                         validity: Validity,
+                         expired: Option[Expired.Value] = None,
+                         link: Option[String] = None)
 
   final case class FieldErrorInfo(name: String, error: String)
 

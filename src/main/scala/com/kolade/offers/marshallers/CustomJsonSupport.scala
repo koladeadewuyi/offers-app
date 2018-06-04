@@ -39,9 +39,7 @@ trait CustomJsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 
   implicit val validityFormat: RootJsonFormat[Validity] = jsonFormat2(Validity)
 
-  implicit val priceFormat: RootJsonFormat[Price] = jsonFormat1(Price)
-
-  implicit val offerFormat: RootJsonFormat[Offer] = jsonFormat5(Offer)
+  implicit val offerFormat: RootJsonFormat[Offer] = jsonFormat6(Offer)
 
   implicit val validatedFieldFormat: RootJsonFormat[FieldErrorInfo] = jsonFormat2(FieldErrorInfo)
 

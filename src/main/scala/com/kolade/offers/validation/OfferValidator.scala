@@ -20,10 +20,10 @@ object OfferValidator extends Validator[Offer] with AppConfig {
       "description",
       s"offer description must exceed $MinAllowedDescriptionLength characters")
 
-    val costErrorOpt = validation(
-      costRule(offer.price.cost.getAmount),
-      "cost",
-      s"offer cost must be greater than $MinAllowedCost")
+    val priceErrorOpt = validation(
+      priceRule(offer.price.getAmount),
+      "price",
+      s"offer price must be greater than $MinAllowedAmount")
 
     val startDateErrorOpt = validation(startDateRule(
       offer.validity.startDate),
@@ -35,14 +35,14 @@ object OfferValidator extends Validator[Offer] with AppConfig {
       "endDate",
       "offer end date must be after start date")
 
-    (offerIdErrorOpt :: descriptionErrorOpt :: costErrorOpt :: startDateErrorOpt :: endDateErrorOpt :: Nil).flatten
+    (offerIdErrorOpt :: descriptionErrorOpt :: priceErrorOpt :: startDateErrorOpt :: endDateErrorOpt :: Nil).flatten
   }
 
   private def offerIdRule(offerId: String) = offerId.length > MinAllowedOfferIdLength
 
   private def descriptionRule(description: String) = description.length > MinAllowedDescriptionLength
 
-  private def costRule(cost: BigDecimal) = cost.compareTo(MinAllowedCost) > Zero
+  private def priceRule(amount: BigDecimal) = amount.compareTo(MinAllowedAmount) > Zero
 
   private def startDateRule(startDate: DateTime) = startDate.isAfter(new DateTime().minusDays(MaxDaysAgoAllowedForOfferStartDate))
 

@@ -10,7 +10,6 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.settings.ServerSettings
 import akka.stream.ActorMaterializer
 import com.github.blemale.scaffeine.{Cache, Scaffeine}
-import com.kolade.offers.config.AppConfig
 import com.kolade.offers.model._
 import com.kolade.offers.repository.DefaultOfferRepository
 import com.kolade.offers.service.DefaultOfferService
@@ -19,7 +18,7 @@ import org.scalatest.{Assertion, GivenWhenThen, TryValues}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ServerSpec extends TestFixture with TryValues with AppConfig with GivenWhenThen {
+class ServerSpec extends TestFixture with TryValues with GivenWhenThen {
 
   override val ApiPort: Int = randomAvailablePort()
   implicit val actorSystem: ActorSystem = ActorSystem("ServerSpec")
@@ -28,7 +27,7 @@ class ServerSpec extends TestFixture with TryValues with AppConfig with GivenWhe
 
   describe("Server") {
     it("should allow creation of an offer") {
-      val entity = createOfferEntity(ValidDescription, ValidCost, now, nextDay)
+      val entity = createOfferEntity(ValidDescription, ValidAmount, now, nextDay)
 
       Given("the server is running")
       withRunningServer {
@@ -41,7 +40,7 @@ class ServerSpec extends TestFixture with TryValues with AppConfig with GivenWhe
           Then("the offer should be retrievable using its offerId")
           whenReady(makeRequest(s"/offers/$offerId")) { response =>
             response.status shouldBe OK
-            val expectedOffer = Offer(offerId, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay), Option(Expired.No))
+            val expectedOffer = Offer(offerId, ValidDescription, price(ValidAmount), Validity(now, nextDay), Option(Expired.No), link(offerId))
             unmarshal[Offer](response.entity).success.value shouldBe expectedOffer
           }
         }
@@ -49,9 +48,9 @@ class ServerSpec extends TestFixture with TryValues with AppConfig with GivenWhe
     }
 
     it("should reject creation of an invalid offer") {
-      val invalidOfferEntity = createOfferEntity(ValidDescription, CostZeroOrLess, now, twoDaysAgo)
+      val invalidOfferEntity = createOfferEntity(ValidDescription, AmountZeroOrLess, now, twoDaysAgo)
       val expectedValidationErrors = ValidationRejection(Seq(
-        FieldErrorInfo("cost", "offer cost must be greater than 0.00"),
+        FieldErrorInfo("price", "offer price must be greater than 0.00"),
         FieldErrorInfo("endDate", "offer end date must be after start date"))
       )
 
@@ -72,7 +71,7 @@ class ServerSpec extends TestFixture with TryValues with AppConfig with GivenWhe
     }
 
     it("should allow cancellation of an offer") {
-      val entity = createOfferEntity(ValidDescription, ValidCost, now, nextDay)
+      val entity = createOfferEntity(ValidDescription, ValidAmount, now, nextDay)
 
       Given("the server is running")
       withRunningServer {
@@ -84,7 +83,7 @@ class ServerSpec extends TestFixture with TryValues with AppConfig with GivenWhe
 
           And("the offer was indeed created")
           whenReady(makeRequest(s"/offers/$offerId")) { response =>
-            val expectedOffer = Offer(offerId, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay), Option(Expired.No))
+            val expectedOffer = Offer(offerId, ValidDescription, price(ValidAmount), Validity(now, nextDay), Option(Expired.No), link(offerId))
             response.status shouldBe OK
             unmarshal[Offer](response.entity).success.value shouldBe expectedOffer
 
@@ -105,8 +104,8 @@ class ServerSpec extends TestFixture with TryValues with AppConfig with GivenWhe
     }
 
     it("should allow update of an offer") {
-      val entity = createOfferEntity(ValidDescription, ValidCost, now, nextDay)
-      val entityUpdate = createOfferEntity(ValidDescription, ValidCost, nextThreeHours, nextDay)
+      val entity = createOfferEntity(ValidDescription, ValidAmount, now, nextDay)
+      val entityUpdate = createOfferEntity(ValidDescription, ValidAmount, nextThreeHours, nextDay)
 
       Given("the server is running")
       withRunningServer {
@@ -118,7 +117,7 @@ class ServerSpec extends TestFixture with TryValues with AppConfig with GivenWhe
 
           And("the offer was indeed created")
           whenReady(makeRequest(s"/offers/$offerId")) { response =>
-            val originalOffer = Offer(offerId, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay), Option(Expired.No))
+            val originalOffer = Offer(offerId, ValidDescription, price(ValidAmount), Validity(now, nextDay), Option(Expired.No), link(offerId))
             response.status shouldBe OK
             unmarshal[Offer](response.entity).success.value shouldBe originalOffer
 
@@ -129,7 +128,7 @@ class ServerSpec extends TestFixture with TryValues with AppConfig with GivenWhe
               Then("the retrieved offer should reflect the updates")
               whenReady(makeRequest(s"/offers/$offerId")) { response =>
                 response.status shouldBe OK
-                val updatedOffer = Offer(offerId, ValidDescription, Price(money(ValidCost)), Validity(nextThreeHours, nextDay), Option(Expired.No))
+                val updatedOffer = Offer(offerId, ValidDescription, price(ValidAmount), Validity(nextThreeHours, nextDay), Option(Expired.No), link(offerId))
                 unmarshal[Offer](response.entity).success.value shouldBe updatedOffer
               }
             }
@@ -139,8 +138,8 @@ class ServerSpec extends TestFixture with TryValues with AppConfig with GivenWhe
     }
 
     it("should allow retrieval of all offers") {
-      val firstEntity = createOfferEntity(ValidDescription, ValidCost, now, nextDay)
-      val secondEntity = createOfferEntity(ValidDescription, ValidCost, nextThreeHours, nextDay)
+      val firstEntity = createOfferEntity(ValidDescription, ValidAmount, now, nextDay)
+      val secondEntity = createOfferEntity(ValidDescription, ValidAmount, nextThreeHours, nextDay)
 
       Given("the server is running")
       withRunningServer {
@@ -152,13 +151,13 @@ class ServerSpec extends TestFixture with TryValues with AppConfig with GivenWhe
           whenReady(makeRequest("/offers", POST, firstEntity)) { response =>
             response.status shouldBe Created
             val offerId = unmarshal[Offer](response.entity).success.value.offerId
-            val firstOffer = Offer(offerId, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay), Option(Expired.No))
+            val firstOffer = Offer(offerId, ValidDescription, price(ValidAmount), Validity(now, nextDay), Option(Expired.No), link(offerId))
 
             And("a successful request to create a second offer is made")
             whenReady(makeRequest("/offers", POST, secondEntity)) { response =>
               response.status shouldBe Created
               val offerId = unmarshal[Offer](response.entity).success.value.offerId
-              val secondOffer = Offer(offerId, ValidDescription, Price(money(ValidCost)), Validity(nextThreeHours, nextDay), Option(Expired.No))
+              val secondOffer = Offer(offerId, ValidDescription, price(ValidAmount), Validity(nextThreeHours, nextDay), Option(Expired.No), link(offerId))
 
               When("a successful request to retrieve all offers is made")
               whenReady(makeRequest("/offers")) { response =>
@@ -174,8 +173,8 @@ class ServerSpec extends TestFixture with TryValues with AppConfig with GivenWhe
     }
 
     it("should allow cancellation of all offers") {
-      val firstEntity = createOfferEntity(ValidDescription, ValidCost, now, nextDay)
-      val secondEntity = createOfferEntity(ValidDescription, ValidCost, nextThreeHours, nextDay)
+      val firstEntity = createOfferEntity(ValidDescription, ValidAmount, now, nextDay)
+      val secondEntity = createOfferEntity(ValidDescription, ValidAmount, nextThreeHours, nextDay)
 
       Given("the server is running")
       withRunningServer {
@@ -184,13 +183,13 @@ class ServerSpec extends TestFixture with TryValues with AppConfig with GivenWhe
         whenReady(makeRequest("/offers", POST, firstEntity)) { response =>
           response.status shouldBe Created
           val offerId = unmarshal[Offer](response.entity).success.value.offerId
-          val firstOffer = Offer(offerId, ValidDescription, Price(money(ValidCost)), Validity(now, nextDay), Option(Expired.No))
+          val firstOffer = Offer(offerId, ValidDescription, price(ValidAmount), Validity(now, nextDay), Option(Expired.No), link(offerId))
 
           And("a successful request to create a second offer is made")
           whenReady(makeRequest("/offers", POST, secondEntity)) { response =>
             response.status shouldBe Created
             val offerId = unmarshal[Offer](response.entity).success.value.offerId
-            val secondOffer = Offer(offerId, ValidDescription, Price(money(ValidCost)), Validity(nextThreeHours, nextDay), Option(Expired.No))
+            val secondOffer = Offer(offerId, ValidDescription, price(ValidAmount), Validity(nextThreeHours, nextDay), Option(Expired.No), link(offerId))
 
             And("both offers were indeed created")
             whenReady(makeRequest("/offers")) { response =>
