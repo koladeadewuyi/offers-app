@@ -32,8 +32,25 @@ curl -v -X POST \
   "description": "a description that exceeds 20 characters",
   "price": "GBP 20.99",
   "validity": {
-      "startDate": "2018-06-03T16:11:39+01:00",
-      "endDate": "2018-07-03T21:46:38+01:00"
+      "startDate": "2019-07-03T16:11:39+01:00",
+      "endDate": "2019-08-03T21:46:38+01:00"
+  }
+}'
+```
+
+To update an existing offer:
+```bash
+curl -v -X PUT \
+  http://127.0.0.1:8080/offers/0edbd2e9-5e7c-4580-9908-28edf693f7c2 \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -d '{
+  "offerId": "N/A",
+  "description": "an updated description of the offer also exceeding 20 characters",
+  "price": "GBP 50",
+  "validity": {
+      "startDate": "2019-06-03T16:11:39+01:00",
+      "endDate": "2019-08-03T21:46:38+01:00"
   }
 }'
 ```
@@ -41,7 +58,7 @@ curl -v -X POST \
 To retrieve an offer:
 ```bash
 curl -v -X GET \
-  http://127.0.0.1:8080/offers/e069427a-4a0d-40cf-8018-534a1d9705c5 \
+  http://127.0.0.1:8080/offers/0edbd2e9-5e7c-4580-9908-28edf693f7c2 \
   -H 'cache-control: no-cache'
 ```
 
@@ -54,32 +71,15 @@ An offer has the format:
     "price": "GBP 20.99",
     "link": "http://offers.kolade.com/offers/0edbd2e9-5e7c-4580-9908-28edf693f7c2",
     "validity": {
-        "startDate": "2018-06-03T16:11:39+01:00",
-        "endDate": "2018-07-03T21:46:38+01:00"
+        "startDate": "2019-06-03T16:11:39+01:00",
+        "endDate": "2019-07-03T21:46:38+01:00"
     }
 }
 ```
 
-To update an existing offer:
-```bash
-curl -v -X PUT \
-  http://127.0.0.1:8080/offers/e069427a-4a0d-40cf-8018-534a1d9705c5 \
-  -H 'cache-control: no-cache' \
-  -H 'content-type: application/json' \
-  -d '{
-  "offerId": "N/A",
-  "description": "an updated description of the offer also exceeding 20 characters",
-  "price": "GBP 50",
-  "validity": {
-      "startDate": "2018-06-03T16:11:39+01:00",
-      "endDate": "2018-08-03T21:46:38+01:00"
-  }
-}'
-```
-
 To cancel an offer:
 ```bash
-curl -v -X DELETE http://127.0.0.1:8080/offers/e069427a-4a0d-40cf-8018-534a1d9705c5 \
+curl -v -X DELETE http://127.0.0.1:8080/offers/0edbd2e9-5e7c-4580-9908-28edf693f7c2 \
   -H 'cache-control: no-cache'
 ```
 
