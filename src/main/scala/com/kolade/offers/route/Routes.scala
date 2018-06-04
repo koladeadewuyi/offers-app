@@ -2,7 +2,6 @@ package com.kolade.offers.route
 
 import java.util.UUID
 
-import akka.Done
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives._
@@ -47,7 +46,9 @@ class Routes(offerService: OfferService) extends CustomJsonSupport with Logging 
             complete(offerService.retrieveAllOffers())
           } ~
           delete {
-            complete(offerService.cancelAllOffers())
+            onSuccess(offerService.cancelAllOffers()) { _ =>
+              complete("all offers deleted")
+            }
           } ~
           post {
             entity(as[Offer]) { offer =>
@@ -67,7 +68,7 @@ class Routes(offerService: OfferService) extends CustomJsonSupport with Logging 
           } ~
           delete {
             onSuccess(offerService.cancelOffer(offerId)) {
-              case Some(_) => complete(Done)
+              case Some(_) => complete(s"offer $offerId deleted")
               case _ => complete(NotFound)
             }
           } ~

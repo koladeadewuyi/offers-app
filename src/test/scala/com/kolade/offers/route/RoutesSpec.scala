@@ -114,7 +114,7 @@ class RoutesSpec extends TestFixture with ScalatestRouteTest {
 
         Delete("/offers") ~> route ~> check {
           status shouldBe OK
-          responseAs[String] shouldBe empty
+          responseAs[String] shouldBe "all offers deleted"
         }
       }
 
@@ -124,7 +124,7 @@ class RoutesSpec extends TestFixture with ScalatestRouteTest {
 
         Delete(s"/offers/$offerId") ~> route ~> check {
           status shouldBe OK
-          responseAs[String] shouldBe empty
+          responseAs[String] shouldBe s"offer $offerId deleted"
         }
       }
     }
