@@ -6,9 +6,9 @@ queried. Offers expire after the period of time defined on the offer. Expired of
 The service allows a merchant to explicitly cancel an offer even before its expiry.
 
 ## Assumptions made
-- Offer description are String/Text format for simplicity reasons. However in a fill fledged application, it may be a form modelled with a case class
+- Offer description would be in String/Text format for simplicity reasons instead of nested form fields
 - Cancelled offers are deleted
-- Expired offers can still be viewed but have a Json field expired set to Yes,   
+- Expired offers can still be viewed but have the expired field set to Yes,   
 
 ## Getting Started
 
@@ -28,9 +28,7 @@ curl -v -X POST \
   -d '{
   "offerId": "N/A",
   "description": "a description that exceeds 20 characters",
-  "price": {
-      "cost": "GBP 20"
-  },
+  "price": "GBP 20.99",
   "validity": {
       "startDate": "2018-06-03T16:11:39+01:00",
       "endDate": "2018-07-03T21:46:38+01:00"
@@ -45,6 +43,21 @@ curl -v -X GET \
   -H 'cache-control: no-cache'
 ```
 
+An offer has the format:
+```json
+{
+    "expired": "No",
+    "offerId": "0edbd2e9-5e7c-4580-9908-28edf693f7c2",
+    "description": "a description that exceeds 20 characters",
+    "price": "GBP 20.99",
+    "link": "http://offers.kolade.com/offers/0edbd2e9-5e7c-4580-9908-28edf693f7c2",
+    "validity": {
+        "startDate": "2018-06-03T16:11:39+01:00",
+        "endDate": "2018-07-03T21:46:38+01:00"
+    }
+}
+```
+
 To update an existing offer:
 ```bash
 curl -v -X PUT \
@@ -54,9 +67,7 @@ curl -v -X PUT \
   -d '{
   "offerId": "N/A",
   "description": "an updated description of the offer also exceeding 20 characters",
-  "price": {
-      "cost": "GBP 50"
-  },
+  "price": "GBP 50",
   "validity": {
       "startDate": "2018-06-03T16:11:39+01:00",
       "endDate": "2018-08-03T21:46:38+01:00"
@@ -103,7 +114,7 @@ Explain what these tests test and why
 Give an example
 ```
 
-### And coding style
+### Coding style
 
 Coding style adopted from: https://docs.scala-lang.org/style/
 
@@ -114,18 +125,13 @@ Coding style adopted from: https://docs.scala-lang.org/style/
 * [Scaffeine](https://maven.apache.org/) - In memory cache. Used instead of a database to store the offers for simplicity reasons
 * [Sbt](https://rometools.github.io/rome/) - Build tool and dependency management
 
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
 ## Versioning
 
-Semantic versioniog is not used   
+For the sake of simplicity Semantic versioning was not used for this submission 
 
 ## Authors
 
 * **Kolade Adewuyi**
-
 
 ## Acknowledgments
 
