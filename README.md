@@ -116,7 +116,9 @@ Give an example
 
 ### Coding style
 
-Coding style adopted from: https://docs.scala-lang.org/style/
+Coding style adopted from: 
+* [Scala docs style guide](https://docs.scala-lang.org/style/)
+* [Originate scala guide](https://www.originate.com/library/scala-guide-best-practices)
 
 
 ## Built With
@@ -127,15 +129,4 @@ Coding style adopted from: https://docs.scala-lang.org/style/
 
 ## Versioning
 
-For the sake of simplicity Semantic versioning was not used for this submission 
-
-## Authors
-
-* **Kolade Adewuyi**
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
- 
+For simplicity reasons Semantic versioning was not used for this submission 
