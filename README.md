@@ -128,7 +128,7 @@ Coding style adopted from:
 
 * [Akka-http](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
 * [Scaffeine](https://maven.apache.org/) - In memory cache. Used instead of a database to store the offers for simplicity reasons
-* [Sbt](https://rometools.github.io/rome/) - Build tool and dependency management
+* [Sbt](https://docs.scala-lang.org/) - Build tool and dependency management
 
 ## Versioning
 
