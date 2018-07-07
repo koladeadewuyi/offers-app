@@ -105,7 +105,7 @@ curl -v -X DELETE http://127.0.0.1:8080/offers \
 ## Running the tests
 
 ```bash
-sbt clean test
+sbt clean test jacoco scalastyle test:scalastyle
 ```
 
 ### Break down of tests
@@ -117,11 +117,17 @@ sbt clean test
 * RoutesSpec - tests the routes, entity validation, and exceptionHandlers while the offer service mocked
 
 
+### Test coverage
+
+* [Jacoco](https://www.scala-sbt.org/sbt-jacoco/getting-started.html)
+
+
 ### Coding style
 
 Coding style adopted from: 
 * [Scala docs style guide](https://docs.scala-lang.org/style/)
 * [Originate scala guide](https://www.originate.com/library/scala-guide-best-practices)
+* [scalastyle](http://www.scalastyle.org/sbt.html)
 
 
 ## Built With
