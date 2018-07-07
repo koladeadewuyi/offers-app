@@ -36,3 +36,19 @@ libraryDependencies ++= Seq(
 )
 
 parallelExecution in Test := false
+
+enablePlugins(JacocoItPlugin)
+
+jacocoReportSettings := JacocoReportSettings()
+  .withThresholds(
+    JacocoThresholds(
+      instruction = 80,
+      method = 100,
+      branch = 100,
+      complexity = 100,
+      line = 90,
+      clazz = 100)
+  )
+
+scalastyleFailOnError := true
+scalastyleFailOnWarning := true
