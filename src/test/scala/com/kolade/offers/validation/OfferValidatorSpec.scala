@@ -16,13 +16,61 @@ class OfferValidatorSpec extends TestFixture {
       }
 
       val errorScenarios = Table(
-        ("testDescription", "offerId", "description", "amount", "startDate", "endDate", "invalidFieldToErrorMsgs"),
-        ("offerId is not > 10 chars", InvalidOfferId, ValidDescription, ValidAmount, now, nextDay, Seq(("offerId", "offerId must exceed 10 characters"))),
-        ("description < 20 chars", randomUUID, "text < 20 chars", ValidAmount, now, nextDay, Seq(("description", "offer description must exceed 20 characters"))),
-        ("price is not > 0", randomUUID, ValidDescription, AmountZeroOrLess, now, nextDay, Seq(("price", "offer price must be greater than 0.00"))),
-        ("startDate is earlier than previous day", randomUUID, ValidDescription, ValidAmount, twoDaysAgo, nextDay, Seq(("startDate", "offer start date must not be earlier than 1 day(s) ago"))),
-        ("endDate is before startDate", randomUUID, ValidDescription, ValidAmount, now, now.minusMillis(1), Seq(("endDate", "offer end date must be after start date"))),
-        ("multiple invalid fields i.e. offerId is not > 10 chars and price is not > 0", InvalidOfferId, ValidDescription, AmountZeroOrLess, now, nextDay, Seq(("offerId", "offerId must exceed 10 characters"), ("price", "offer price must be greater than 0.00")))
+        ("testDescription",
+          "offerId",
+          "description",
+          "amount",
+          "startDate",
+          "endDate",
+          "invalidFieldToErrorMsgs"),
+
+        ("offerId is not > 10 chars",
+          InvalidOfferId,
+          ValidDescription,
+          ValidAmount,
+          now,
+          nextDay,
+          Seq(("offerId", "offerId must exceed 10 characters"))),
+
+        ("description < 20 chars",
+          randomUUID,
+          "text < 20 chars",
+          ValidAmount,
+          now,
+          nextDay,
+          Seq(("description", "offer description must exceed 20 characters"))),
+
+        ("price is not > 0",
+          randomUUID,
+          ValidDescription,
+          AmountZeroOrLess,
+          now,
+          nextDay,
+          Seq(("price", "offer price must be greater than 0.00"))),
+
+        ("startDate earlier than previous day",
+          randomUUID,
+          ValidDescription,
+          ValidAmount,
+          twoDaysAgo,
+          nextDay,
+          Seq(("startDate", "offer start date must not be earlier than 1 day(s) ago"))),
+
+        ("endDate before startDate",
+          randomUUID,
+          ValidDescription,
+          ValidAmount,
+          now,
+          now.minusMillis(1),
+          Seq(("endDate", "offer end date must be after start date"))),
+
+        ("multiple invalid fields i.e. offerId is not > 10 chars and price is not > 0",
+          InvalidOfferId,
+          ValidDescription,
+          AmountZeroOrLess,
+          now,
+          nextDay,
+          Seq(("offerId", "offerId must exceed 10 characters"), ("price", "offer price must be greater than 0.00")))
       )
 
       forAll(errorScenarios) { (testDescription, offerId, description, amount, startDate, endDate, invalidFieldToErrorMsgs) =>
