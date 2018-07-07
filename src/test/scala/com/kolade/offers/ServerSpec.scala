@@ -20,10 +20,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class ServerSpec extends TestFixture with TryValues with GivenWhenThen {
 
+  private val TimeoutSeconds = 10
+  private val RetryIntervalMillis = 100
   override val ApiPort: Int = randomAvailablePort()
   implicit val actorSystem: ActorSystem = ActorSystem("ServerSpec")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
-  override implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(10, Seconds), Span(100, Millis))
+  override implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(TimeoutSeconds, Seconds), Span(RetryIntervalMillis, Millis))
 
   describe("Server") {
     it("should allow creation of an offer") {
