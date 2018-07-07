@@ -88,5 +88,5 @@ class Routes(offerService: OfferService) extends CustomJsonSupport with Logging 
 }
 
 object Routes {
-  def apply(offerService: OfferService) = new Routes(offerService)
+  def apply(offerService: OfferService): Routes = new Routes(offerService)
 }

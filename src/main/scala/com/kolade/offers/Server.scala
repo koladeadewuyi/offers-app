@@ -53,10 +53,7 @@ class Server(offerService: OfferService) {
         .flatMap(_.unbind())
         .onComplete(_ => {
           systemReference.get().log.info("Shutting down the server")
-          if (system.isEmpty)
-            actorSystem.terminate()
-          else
-            systemReference.get().terminate()
+          if (system.isEmpty) actorSystem.terminate() else systemReference.get().terminate()
         })
     }
 

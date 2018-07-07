@@ -47,5 +47,5 @@ class DefaultOfferService(offerRepository: OfferRepository) extends OfferService
 }
 
 object DefaultOfferService {
-  def apply(offerRepository: OfferRepository) = new DefaultOfferService(offerRepository)
+  def apply(offerRepository: OfferRepository): DefaultOfferService = new DefaultOfferService(offerRepository)
 }
